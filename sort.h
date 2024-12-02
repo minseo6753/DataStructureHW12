@@ -23,42 +23,8 @@ void InsertionSort(T* a, int n) {
 	}
 }
 
-template <class T>
-void QuickSwap(T* a, const int left, const int right ,stack<int>& s) {
-	if (left < right) {
-		int i = left, j = right + 1, pivot = a[left];
-		do {
-			do i++; while (a[i] < pivot);
-			do j--; while (a[j] > pivot);
-			if (i < j)swap(a[i], a[j]);
-		} while (i < j);
-		swap(a[left], a[j]);
-
-		s.push(left);
-		s.push(j - 1);
-		s.push(j + 1);
-		s.push(right);
-	}
-}
-
-template <class T>
-void QuickSort(T* a, int n) {
-	
-	stack< int> s;
-	s.push(1);
-	s.push(n);
-	while (!s.empty()) {
-		int right = s.top();
-		s.pop();
-		int left = s.top();
-		s.pop();
-		QuickSwap(a, left, right , s);
-		
-	}
-}
-
 //template <class T>
-//void QuickSort(T* a, const int left, const int right) {
+//void QuickSwap(T* a, const int left, const int right ,stack<pair<int,int>>& s) {
 //	if (left < right) {
 //		int i = left, j = right + 1, pivot = a[left];
 //		do {
@@ -68,11 +34,44 @@ void QuickSort(T* a, int n) {
 //		} while (i < j);
 //		swap(a[left], a[j]);
 //
-//		QuickSort(a, left, j - 1);
-//		QuickSort(a, j + 1, right);
+//		s.push(make_pair(left, j - 1));
+//		s.push(make_pair(j + 1, right));
 //	}
-//	else return;
+//	return;
 //}
+//
+//template <class T>
+//void QuickSort(T* a, int n) {
+//	
+//	stack<pair<int, int>> s;
+//	s.push(make_pair(1, n));
+//	while (!s.empty()) {
+//		int left = s.top().first;
+//		int right = s.top().second;
+//		s.pop();
+//		QuickSwap(a, left, right , s);
+//		
+//	}
+//	return;
+//}
+
+template <class T>
+void QuickSort(T* a, const int left, const int right) {
+	if (left < right) {
+		int i = left, j = right + 1, pivot = a[left];
+		do {
+			do i++; while (a[i] < pivot);
+			do j--; while (a[j] > pivot);
+			if (i < j)swap(a[i], a[j]);
+		} while (i < j);
+		swap(a[left], a[j]);
+
+		QuickSort(a, left, j - 1);
+		QuickSort(a, j + 1, right);
+		
+	}
+	return;
+}
 
 template <class T>
 void Merge(T* initList, T* resultList, int start, int mid, int end) {

@@ -53,7 +53,7 @@ int main(int argc, char* argv[]) {
 		
 		copy(arr + 1, arr + N + 1, temp + 1);
 		start_t = chrono::system_clock::now();
-		QuickSort(temp,N);
+		QuickSort(temp, 1, N);
 		end_t = chrono::system_clock::now();
 		diff_t = (double)chrono::duration_cast<chrono::microseconds>(end_t - start_t).count() / 1000000;
 		result[1] = diff_t;
@@ -80,8 +80,8 @@ int main(int argc, char* argv[]) {
 		cout.precision(5);
 		cout << fixed;
 		for (int j = 0; j < 4; j++) {
-			cout << result[j] << "|";
+			cout << result[j] << " ";
 		}
-		cout << "N=" << N << endl;
+		cout  << N << endl;
 	}
 }
