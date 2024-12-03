@@ -51,13 +51,12 @@ int main(int argc, char* argv[]) {
 		diff_t = (double)chrono::duration_cast<chrono::microseconds>(end_t - start_t).count() / 1000000;
 		result[0] = diff_t;
 		
-		copy(arr + 1, arr + N + 1, temp + 1);
+		copy(arr + 1, arr + N + 1, temp + 1); //정렬 전 데이터로 초기화
 		start_t = chrono::system_clock::now();
-		QuickSort(temp, 1, N);
+		QuickSort(temp, N);
 		end_t = chrono::system_clock::now();
 		diff_t = (double)chrono::duration_cast<chrono::microseconds>(end_t - start_t).count() / 1000000;
 		result[1] = diff_t;
-
 		
 		copy(arr + 1, arr + N + 1, temp + 1);
 		start_t = chrono::system_clock::now();
@@ -80,8 +79,8 @@ int main(int argc, char* argv[]) {
 		cout.precision(5);
 		cout << fixed;
 		for (int j = 0; j < 4; j++) {
-			cout << result[j] << " ";
+			cout << result[j] << "|";
 		}
-		cout  << N << endl;
+		cout <<"N=" << N << endl;
 	}
 }

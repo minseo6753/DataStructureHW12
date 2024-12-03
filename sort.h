@@ -1,8 +1,6 @@
 #ifndef SORT_H
 #define SORT_H
 #include<iostream>
-#include<vector>
-#include<stack>
 
 using namespace std;
 
@@ -23,40 +21,8 @@ void InsertionSort(T* a, int n) {
 	}
 }
 
-//template <class T>
-//void QuickSwap(T* a, const int left, const int right ,stack<pair<int,int>>& s) {
-//	if (left < right) {
-//		int i = left, j = right + 1, pivot = a[left];
-//		do {
-//			do i++; while (a[i] < pivot);
-//			do j--; while (a[j] > pivot);
-//			if (i < j)swap(a[i], a[j]);
-//		} while (i < j);
-//		swap(a[left], a[j]);
-//
-//		s.push(make_pair(left, j - 1));
-//		s.push(make_pair(j + 1, right));
-//	}
-//	return;
-//}
-//
-//template <class T>
-//void QuickSort(T* a, int n) {
-//	
-//	stack<pair<int, int>> s;
-//	s.push(make_pair(1, n));
-//	while (!s.empty()) {
-//		int left = s.top().first;
-//		int right = s.top().second;
-//		s.pop();
-//		QuickSwap(a, left, right , s);
-//		
-//	}
-//	return;
-//}
-
 template <class T>
-void QuickSort(T* a, const int left, const int right) {
+void QuickSwap(T* a, const int left, const int right ,pair<int,int>* stack, int& top) {
 	if (left < right) {
 		int i = left, j = right + 1, pivot = a[left];
 		do {
@@ -66,11 +32,25 @@ void QuickSort(T* a, const int left, const int right) {
 		} while (i < j);
 		swap(a[left], a[j]);
 
-		QuickSort(a, left, j - 1);
-		QuickSort(a, j + 1, right);
+		stack[++top]=make_pair(left, j - 1);
+		stack[++top]=make_pair(j + 1, right);
+	}
+}
+
+template <class T>
+void QuickSort(T* a, int n) {
+	
+	pair<int, int>* s = new pair<int, int>[n + 1];
+	s[1] = make_pair(1, n);
+	int top = 1;
+	while (top > 0) {
+		int left = s[top].first;
+		int right = s[top].second;
+		top--;
+		QuickSwap(a, left, right , s, top);
 		
 	}
-	return;
+	delete[]s;
 }
 
 template <class T>
@@ -93,76 +73,35 @@ void Merge(T* initList, T* resultList, int start, int mid, int end) {
 template <class T>
 void NaturalMergeSort(T* a, const int n) {
 
-	vector<int> order;
-	int s = 1, m = 1, e = 2;
-	while (s <= n) {
-		m = s;
-		while (m != n&& a[m] <= a[m + 1]) {
-			m++;
-		}
-		if (m == n) {
-			order.push_back(s);
-			order.push_back(m);
-			break;
-		}
-		else { 
-			e = m + 1;
-			
-			while (e != n && a[e] <= a[e + 1]) {
-				e++;
-				
-			}
-			
-
-			order.push_back(s);
-			order.push_back(m);
-			order.push_back(e);
-			s = e + 1;
-		}
-
+	int* ascend = new int[n + 1];
+	ascend[1] = 1;
+	int count = 1; //오름차순의 갯수
+	for (int i = 2; i <= n; i++) {
+		if (a[i] < a[i - 1]) ascend[++count] = i; //오름차순의 시작점 인덱스 저장
 	}
 
-	T* tempList = new T[n + 1];
-	
-	bool toggle = true;
-	int i;
-	for (i = 3; i <= order.size(); i *= 2) {
-		int j;
-		for (j = 0; order.size() - j >= i; j += i) {
-			s = order[j];
-			m = order[j + (i - 1) / 2];	
-			e = order[j + i - 1];
-			if (toggle) Merge(a, tempList, s, m, e);
-			else Merge(tempList, a, s, m, e);
+	int* tempList = new int[n + 1];
+
+	while (count > 1) {
+		int i;
+		for (i = 1; i <= count - 2; i += 2) {
+			Merge(a, tempList, ascend[i], ascend[i + 1] - 1, ascend[i + 2] - 1);
 		}
-		if ((order.size() - j <= i/2) && order.size() - j > 0) {
-			if (toggle)copy(a + order[j], a + n + 1, tempList + order[j]);
-			else copy(tempList + order[j], tempList + n + 1, a + order[j]);
+		if (count - i == 1) {
+			Merge(a, tempList, ascend[i], ascend[i + 1] - 1, n);
+			copy(tempList + 1, tempList + n + 1, a + 1);
 		}
-		else if (order.size() - j > i/2) {
-			s = order[j];
-			m = order[j + (i - 1) / 2];
-			e = n;
-			if (toggle)Merge(a, tempList, s, m, e);
-			else Merge(tempList, a, s, m, e);
-		}
+		else copy(tempList + 1, tempList + ascend[i], a + 1);
 		
-		toggle = !toggle;
 
+		int precount = count;
+		count = 0;
+		for (int i = 1; i <= precount; i += 2) {
+			ascend[++count] = ascend[i];
+		}
 	}
 
-	if (i > order.size()) {
-		s = 1;
-		m = order[(i - 1) / 2];
-		e = n;
-		if (toggle)Merge(a, tempList, s, m, e);
-		else Merge(tempList, a, s, m, e);
-		
-		toggle = !toggle;
-	}
-
-	if (!toggle)copy(tempList + 1, tempList + n + 1, a + 1);
-
+	delete[]ascend;
 	delete[]tempList;
 }
 
